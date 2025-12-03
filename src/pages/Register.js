@@ -18,38 +18,32 @@ export default function Register() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#0f172a",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: 20,
+        padding: "20px",
       }}
     >
-      <div
-        style={{
-          maxWidth: 480,
-          width: "100%",
-          background: "transparent",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: 32,
-            fontWeight: 700,
-            textAlign: "center",
-            color: "white",
-          }}
-        >
+      <div style={{ maxWidth: 480, width: "100%" }}>
+        <h1 style={{ fontSize: 32, fontWeight: 700, textAlign: "center" }}>
           Create Your Account
         </h1>
 
-        <p style={{ textAlign: "center", color: "#94a3b8", marginBottom: 32 }}>
+        <p
+          style={{
+            textAlign: "center",
+            color: "var(--muted)",
+            marginBottom: 32,
+          }}
+        >
           Join our community to share and discover knowledge.
         </p>
 
         <div style={{ display: "grid", gap: 20 }}>
           <div>
-            <label style={{ color: "white", fontSize: 14 }}>Username</label>
+            <label style={{ color: "var(--text)", fontSize: 14 }}>
+              Username
+            </label>
             <input
               className="input"
               placeholder="Enter your username"
@@ -59,7 +53,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label style={{ color: "white", fontSize: 14 }}>Email</label>
+            <label style={{ color: "var(--text)", fontSize: 14 }}>Email</label>
             <input
               className="input"
               placeholder="Enter your email address"
@@ -69,7 +63,9 @@ export default function Register() {
           </div>
 
           <div>
-            <label style={{ color: "white", fontSize: 14 }}>Password</label>
+            <label style={{ color: "var(--text)", fontSize: 14 }}>
+              Password
+            </label>
             <input
               className="input"
               placeholder="Enter your password"
@@ -80,7 +76,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label style={{ color: "white", fontSize: 14 }}>
+            <label style={{ color: "var(--text)", fontSize: 14 }}>
               Confirm Password
             </label>
             <input
@@ -105,9 +101,9 @@ export default function Register() {
             Create Account
           </button>
 
-          <p style={{ color: "#94a3b8", textAlign: "center" }}>
+          <p style={{ color: "var(--muted)", textAlign: "center" }}>
             Already have an account?{" "}
-            <Link to="/login" style={{ color: "#3b82f6" }}>
+            <Link to="/login" style={{ color: "var(--primary)" }}>
               Log In
             </Link>
           </p>

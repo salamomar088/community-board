@@ -75,7 +75,7 @@ export default function CreatePost() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        padding: 20,
+        padding: 12,
         zIndex: 200,
       }}
     >
@@ -84,9 +84,10 @@ export default function CreatePost() {
         style={{
           width: "100%",
           maxWidth: 800,
-          maxHeight: "85vh",
+          maxHeight: "88vh",
           overflowY: "auto",
           position: "relative",
+          borderRadius: 16,
         }}
         onClick={(e) => e.stopPropagation()}
       >

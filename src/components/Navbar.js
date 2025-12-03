@@ -63,7 +63,6 @@ export default function Navbar() {
         {user && (
           <div
             className="profile-tag"
-            onClick={() => nav(`/profile/${user.id}`)}
             style={{
               display: "flex",
               alignItems: "center",
@@ -72,11 +71,13 @@ export default function Navbar() {
               borderRadius: 10,
               cursor: "pointer",
               transition: "0.2s",
+              minWidth: "fit-content",
             }}
+            onClick={() => nav(`/profile/${user.id}`)}
           >
             <img
               src={user.avatar}
-              alt="user avatar"
+              alt=""
               style={{
                 width: 36,
                 height: 36,

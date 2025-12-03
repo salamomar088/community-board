@@ -12,12 +12,23 @@ export default function Profile() {
   return (
     <div className="grid" style={{ maxWidth: 900, margin: "0 auto" }}>
       <div className="card">
-        <div className="profile-header">
-          <img src={`https://i.pravatar.cc/100?u=${userId}`} alt="user" />
+        <div
+          className="profile-header"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            flexWrap: "wrap",
+          }}
+        >
+          <img
+            src={`https://i.pravatar.cc/100?u=${userId}`}
+            alt=""
+            style={{ width: 70, height: 70, borderRadius: "50%" }}
+          />
 
           <div>
             <div className="profile-name">{user?.name || "User"}</div>
-
             <div className="post-meta">{userPosts.length} posts shared</div>
           </div>
         </div>
