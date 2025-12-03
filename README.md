@@ -7,9 +7,6 @@ This project was built as part of a university course requirement and includes c
 
 ## 🚀 Live Demo (Deployed on Vercel)
 🔗 **Live Website:** https://community-board-project.vercel.app
-*(Replace with your actual Vercel domain)*
-
----
 
 ## 📱 Mobile Responsive
 Designed to work smoothly on:
@@ -25,9 +22,6 @@ All pages adjust automatically:
 - Profile  
 - Footer  
 - Navbar  
-
----
-
 ## ⭐ Features
 ### 🎨 UI/UX
 - Modern responsive layout  
@@ -53,9 +47,6 @@ All pages adjust automatically:
 - Custom responsive CSS system  
 - Deployed on Vercel  
 - Git version control with multiple branches  
-
----
-
 ## 🛠 Technologies Used
 ### **Frontend**
 - React.js  
