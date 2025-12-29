@@ -1,32 +1,82 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { postsSeed } from "../data/mock";
+import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
+
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 export default function EditPost() {
   const { id } = useParams();
   const nav = useNavigate();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
-  const post = postsSeed.find((p) => p.id === id);
+  const [post, setPost] = useState(null);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const [title, setTitle] = useState(post ? post.title : "");
-  const [content, setContent] = useState(post ? post.content : "");
+  // 🔄 Load post
+  useEffect(() => {
+    loadPost();
+  }, [id]);
 
-  function save() {
-    if (!post) return;
-    post.title = title;
-    post.content = content;
-    toast.success("Post updated");
-    nav(`/post/${id}`);
+  async function loadPost() {
+    try {
+      const res = await fetch(`${API_URL}/posts/${id}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Post not found");
+      }
+
+      setPost(data);
+      setTitle(data.title);
+      setContent(data.content);
+    } catch (err) {
+      toast.error(err.message);
+      nav("/");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // 💾 Save changes
+  async function save() {
+    if (!title.trim() || !content.trim()) {
+      return toast.error("Title and content cannot be empty");
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/posts/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title, content }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update post");
+      }
+
+      toast.success("Post updated");
+      nav(`/post/${id}`);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }
+
+  if (loading) {
+    return <div className="card">Loading...</div>;
   }
 
   if (!post) {
     return <div className="card empty">Post Not Found</div>;
   }
 
-  if (user?.id !== post.author.id) {
+  // 🔐 Owner-only access
+  if (!user || user.id !== post.user_id) {
     return <div className="card empty">Not allowed to edit this post</div>;
   }
 

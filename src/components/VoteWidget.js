@@ -1,6 +1,6 @@
 export default function VoteWidget({ votes, onUp, onDown }) {
   return (
-    <div className="vote">
+    <div className="vote" onClick={(e) => e.stopPropagation()}>
       <button className="up" onClick={onUp}>
         ▲
       </button>
