@@ -1,18 +1,22 @@
 import { useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { tagsAll, postsSeed } from "../data/mock";
 import toast from "react-hot-toast";
 import { useAuth } from "../contexts/AuthContext";
-import { v4 as uuid } from "uuid";
 import { useNavigate } from "react-router-dom";
+
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+
+// temporary tags (until backend supports tags)
+const TAGS = ["general", "help", "discussion", "news", "random"];
 
 export default function CreatePost() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const [preview, setPreview] = useState(false);
-  const { user } = useAuth();
+
+  const { user, token } = useAuth();
   const nav = useNavigate();
 
   function toggleTag(tag) {
@@ -21,31 +25,44 @@ export default function CreatePost() {
     );
   }
 
-  function create() {
+  // 🚀 CREATE POST (REAL BACKEND)
+  async function create() {
     if (!user) return toast.error("Sign in to create a post");
-    if (!title.trim() || !content.trim())
+    if (!title.trim() || !content.trim()) {
       return toast.error("Please fill Title & Content");
+    }
 
-    const newPost = {
-      id: uuid(),
-      title,
-      content,
-      author: { id: user.id, name: user.name, avatar: user.avatar },
-      tags: selectedTags,
-      votes: 0,
-      commentsCount: 0,
-      createdAt: Date.now(),
-    };
+    try {
+      const res = await fetch(`${API_URL}/posts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title,
+          content,
+          // tags intentionally omitted for now
+        }),
+      });
 
-    postsSeed.unshift(newPost);
-    toast.success("Post created");
-    nav(`/post/${newPost.id}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to create post");
+      }
+
+      toast.success("Post created");
+      nav("/"); // go back to feed
+    } catch (err) {
+      toast.error(err.message);
+    }
   }
 
   const tagBadges = useMemo(
     () => (
       <div className="tags" style={{ margin: "8px 0" }}>
-        {tagsAll.map((t) => (
+        {TAGS.map((t) => (
           <button
             key={t}
             className="tag"

@@ -1,70 +1,112 @@
-# Getting Started with Create React App
+# 📘 Knowledge Community – React Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A fully responsive community platform where users can create posts, view posts, filter by tags, vote, and browse in light or dark mode.  
+This project was built as part of a university course requirement and includes complete mobile responsiveness, GitHub version control, and Vercel deployment.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Live Demo (Deployed on Vercel)
 
-### `npm start`
+🔗 **Live Website:** https://community-board-project.vercel.app
+_(Replace with your actual Vercel domain)_
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 📱 Mobile Responsive
 
-### `npm test`
+Designed to work smoothly on:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- iPhone 13 / 14 / 15
+- Android devices
+- Tablets
+- Chrome DevTools mobile emulation
 
-### `npm run build`
+All pages adjust automatically:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Home
+- Create Post
+- Login / Register
+- Profile
+- Footer
+- Navbar
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## ⭐ Features
 
-### `npm run eject`
+### 🎨 UI/UX
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- Modern responsive layout
+- Light/Dark mode
+- Animated footer
+- Clean typography
+- Mobile-optimized modals
+- Smooth interactions
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### ✏️ Functionality
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Create posts
+- View post details
+- Vote (up/down)
+- Filter by tags
+- Preview posts in Markdown
+- User login/logout (mock auth)
+- Profile page showing user posts
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### ⚙️ Developer Features
 
-## Learn More
+- Component-based architecture
+- Context API for Auth + Theme
+- React Router for navigation
+- Custom responsive CSS system
+- Deployed on Vercel
+- Git version control with multiple branches
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🛠 Technologies Used
 
-### Code Splitting
+### **Frontend**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- React.js
+- React Router
+- Context API
+- React Markdown (markdown preview)
+- Custom CSS (responsive)
 
-### Analyzing the Bundle Size
+### **Tools**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- Git & GitHub
+- Node.js
+- Vercel (deployment)
+- VS Code
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 📂 Project Structure
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+src/
+│── components/
+│ ├── Navbar.js
+│ ├── Footer.js
+│ ├── PostCard.js
+│ ├── TagChip.js
+│ ├── VoteWidget.js
+│── contexts/
+│ ├── AuthContext.js
+│ ├── ThemeContext.js
+│── pages/
+│ ├── Home.js
+│ ├── CreatePost.js
+│ ├── PostDetail.js
+│ ├── Profile.js
+│ ├── Login.js
+│ ├── Register.js
+│── data/
+│ ├── mock.js
+│── styles/
+│ ├── styles.css
+│── App.js
+│── index.js
+public/
+README.md
