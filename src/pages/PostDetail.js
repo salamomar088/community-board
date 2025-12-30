@@ -213,7 +213,10 @@ export default function PostDetail() {
               text: c.content,
               author: c.fullname,
               createdAt: c.created_at,
+              depth: c.depth ?? 0,
             }}
+            comments={comments} // ✅ REQUIRED
+            setComments={setComments} // ✅ REQUIRED
           />
         ))}
       </div>

@@ -10,6 +10,7 @@ import EditPost from "./pages/EditPost";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ProfileEdit from "./pages/profileEdit";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/create" element={<CreatePost />} />
           <Route path="/edit/:id" element={<EditPost />} />
           <Route path="/profile/:userId" element={<Profile />} />
+          <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>

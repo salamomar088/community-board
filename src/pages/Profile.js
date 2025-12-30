@@ -12,6 +12,7 @@ export default function Profile() {
   const nav = useNavigate();
 
   const [posts, setPosts] = useState([]);
+  const [profileUser, setProfileUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // 🔐 Route protection
@@ -22,12 +23,28 @@ export default function Profile() {
     }
   }, [user, nav]);
 
-  // 🔄 Fetch posts
+  // 🔄 Fetch profile user + posts
   useEffect(() => {
     if (user) {
+      loadProfileUser();
       loadUserPosts();
     }
   }, [userId, user]);
+
+  async function loadProfileUser() {
+    try {
+      const res = await fetch(`${API_URL}/profile/${userId}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to load profile");
+      }
+
+      setProfileUser(data);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }
 
   async function loadUserPosts() {
     try {
@@ -38,7 +55,6 @@ export default function Profile() {
         throw new Error(data.message || "Failed to load posts");
       }
 
-      // filter posts belonging to profile user
       const userPosts = data.filter(
         (p) => String(p.user_id) === String(userId)
       );
@@ -65,16 +81,28 @@ export default function Profile() {
             flexWrap: "wrap",
           }}
         >
-          {/* avatar still mocked intentionally */}
+          {/* ✅ REAL PROFILE IMAGE */}
           <img
-            src={`https://i.pravatar.cc/100?u=${userId}`}
+            src={profileUser?.profile_image || "/avatar-placeholder.png"}
             alt=""
             style={{ width: 70, height: 70, borderRadius: "50%" }}
           />
 
           <div>
-            <div className="profile-name">{user.fullname}</div>
+            <div className="profile-name">{profileUser?.fullname}</div>
+
             <div className="post-meta">{posts.length} posts shared</div>
+
+            {/* ✅ Edit only if owner */}
+            {user?.id === Number(userId) && (
+              <button
+                className="btn"
+                style={{ marginTop: 8 }}
+                onClick={() => nav("/profile/edit")}
+              >
+                Edit Profile
+              </button>
+            )}
           </div>
         </div>
       </div>
