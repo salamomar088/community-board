@@ -83,7 +83,7 @@ export default function Profile() {
         >
           {/* ✅ REAL PROFILE IMAGE */}
           <img
-            src={profileUser?.profile_image || "/avatar-placeholder.png"}
+            src={profileUser?.profile_picture || "/avatar-placeholder.png"}
             alt=""
             style={{ width: 70, height: 70, borderRadius: "50%" }}
           />

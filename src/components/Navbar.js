@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const { user, signOut } = useAuth();
@@ -8,9 +9,33 @@ export default function Navbar() {
   const nav = useNavigate();
   const location = useLocation();
 
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+
+  const [avatar, setAvatar] = useState(null);
+
   function active(path) {
     return location.pathname === path;
   }
+
+  // 🔄 Load profile avatar
+  useEffect(() => {
+    if (!user) {
+      setAvatar(null);
+      return;
+    }
+
+    fetch(`${API_URL}/profile/${user.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        // ✅ accept BOTH possible keys
+        const image = data.profile_image || data.profile_picture || null;
+
+        if (image) {
+          setAvatar(image);
+        }
+      })
+      .catch(() => {});
+  }, [user]);
 
   return (
     <nav className="nav flex-between" style={{ padding: "0 28px" }}>
@@ -76,12 +101,13 @@ export default function Navbar() {
             onClick={() => nav(`/profile/${user.id}`)}
           >
             <img
-              src={user.avatar}
+              src={avatar || "/avatar-placeholder.png"}
               alt=""
               style={{
                 width: 36,
                 height: 36,
                 borderRadius: "50%",
+                objectFit: "cover",
               }}
             />
             <div
@@ -91,7 +117,7 @@ export default function Navbar() {
                 color: theme === "dark" ? "white" : "var(--text)",
               }}
             >
-              {user.name}
+              {user.fullname}
             </div>
           </div>
         )}
