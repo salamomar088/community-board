@@ -2,11 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
-
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+import api from "../api/axios";
 
 export default function ProfileEdit() {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const nav = useNavigate();
 
   const [image, setImage] = useState(null);
@@ -36,19 +35,7 @@ export default function ProfileEdit() {
     try {
       setLoading(true);
 
-      const res = await fetch(`${API_URL}/profile/image`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to update profile image");
-      }
+      await api.put("/profile/image", formData);
 
       toast.success("Profile image updated");
       nav(`/profile/${user.id}`);

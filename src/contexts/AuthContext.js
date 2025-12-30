@@ -1,10 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import api from "../api/axios";
 
 const authCtx = createContext();
-
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -32,19 +31,12 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      const res = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const res = await api.post("/auth/login", {
+        email,
+        password,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Login failed");
-      }
+      const data = res.data;
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
@@ -66,24 +58,12 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      const res = await fetch(`${API_URL}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullname: name,
-          username: email.split("@")[0], // auto username
-          email,
-          password,
-        }),
+      await api.post("/auth/register", {
+        fullname: name,
+        username: email.split("@")[0], // auto username
+        email,
+        password,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Registration failed");
-      }
 
       toast.success("Account Created");
 

@@ -29,20 +29,18 @@ function timeAgo(date) {
 
 export default function PostCard({ post }) {
   const nav = useNavigate();
-  const { token, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [votes, setVotes] = useState(post.votes || 0);
 
   async function handleVote(e) {
-    console.log("VOTE CLICKED", post.id);
-    if (e) e.stopPropagation(); // ✅ SAFE
+    if (e) e.stopPropagation(); // ✅ prevent card click
 
     if (!isAuthenticated) {
       return toast.error("Sign in to vote");
     }
 
     try {
-      const result = await toggleLike(post.id, token);
-      console.log("LIKE RESPONSE:", result);
+      const result = await toggleLike(post.id);
 
       if (typeof result.likes === "number") {
         setVotes(result.likes);
@@ -53,7 +51,7 @@ export default function PostCard({ post }) {
   }
 
   function goToProfile(e) {
-    e.stopPropagation(); // prevent opening post
+    e.stopPropagation();
     nav(`/profile/${post.user_id}`);
   }
 
@@ -75,7 +73,7 @@ export default function PostCard({ post }) {
       />
 
       <div>
-        {/* ✅ AUTHOR INFO */}
+        {/* AUTHOR INFO */}
         <div
           style={{
             display: "flex",
@@ -114,10 +112,10 @@ export default function PostCard({ post }) {
           </div>
         </div>
 
-        {/* ✅ POST TITLE */}
+        {/* POST TITLE */}
         <div className="post-title">{post.title}</div>
 
-        {/* ✅ TAGS */}
+        {/* TAGS */}
         {Array.isArray(post.tags) && post.tags.length > 0 && (
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {post.tags.map((t) => (

@@ -6,82 +6,57 @@ import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+import api from "../api/axios";
 
 export default function PostDetail() {
   const { id } = useParams();
   const nav = useNavigate();
-  const { user, token } = useAuth();
+  const { user } = useAuth();
 
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // 🔄 Load post + comments
+  // 🔄 Load post + comments (Axios + ESLint-safe)
   useEffect(() => {
-    loadPost();
-    loadComments();
-  }, [id]);
+    async function loadData() {
+      try {
+        const [postRes, commentsRes] = await Promise.all([
+          api.get(`/posts/${id}`),
+          api.get(`/comments/${id}`),
+        ]);
 
-  async function loadPost() {
-    try {
-      const res = await fetch(`${API_URL}/posts/${id}`);
-      const data = await res.json();
+        const postData = postRes.data;
 
-      if (!res.ok) {
-        throw new Error(data.message || "Post not found");
+        setPost({
+          ...postData,
+          votes: postData.votes ?? 0,
+        });
+
+        setComments(commentsRes.data);
+      } catch (err) {
+        toast.error(err.message);
+        nav("/");
+      } finally {
+        setLoading(false);
       }
-
-      setPost({
-        ...data,
-        votes: data.votes ?? 0,
-      });
-    } catch (err) {
-      toast.error(err.message);
-      nav("/");
     }
-  }
 
-  async function loadComments() {
-    try {
-      const res = await fetch(`${API_URL}/comments/${id}`);
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to load comments");
-      }
-
-      setComments(data);
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
+    loadData();
+  }, [id, nav]);
 
   // ❤️ Vote (backend)
   async function vote() {
     if (!user) return toast.error("Sign in to vote");
 
     try {
-      const res = await fetch(`${API_URL}/likes`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ postId: id }),
-      });
+      const res = await api.post("/likes", { postId: id });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to vote");
-      }
-
-      setPost((p) => ({ ...p, votes: data.totalLikes }));
+      setPost((p) => ({
+        ...p,
+        votes: res.data.likes,
+      }));
     } catch (err) {
       toast.error(err.message);
     }
@@ -93,26 +68,17 @@ export default function PostDetail() {
     if (!newComment.trim()) return toast.error("Write something first");
 
     try {
-      const res = await fetch(`${API_URL}/comments`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          postId: id,
-          content: newComment,
-        }),
+      await api.post("/comments", {
+        postId: id,
+        content: newComment,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to add comment");
-      }
-
       setNewComment("");
-      loadComments();
+
+      // reload comments
+      const res = await api.get(`/comments/${id}`);
+      setComments(res.data);
+
       toast.success("Comment added");
     } catch (err) {
       toast.error(err.message);
@@ -124,16 +90,7 @@ export default function PostDetail() {
     if (!user) return;
 
     try {
-      const res = await fetch(`${API_URL}/posts/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to delete post");
-      }
+      await api.delete(`/posts/${id}`);
 
       toast.success("Post deleted");
       nav("/");
@@ -215,8 +172,8 @@ export default function PostDetail() {
               createdAt: c.created_at,
               depth: c.depth ?? 0,
             }}
-            comments={comments} // ✅ REQUIRED
-            setComments={setComments} // ✅ REQUIRED
+            comments={comments}
+            setComments={setComments}
           />
         ))}
       </div>

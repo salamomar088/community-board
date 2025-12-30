@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import PostCard from "../components/PostCard";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
-
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+import api from "../api/axios";
 
 export default function Profile() {
   const { userId } = useParams();
@@ -23,49 +22,33 @@ export default function Profile() {
     }
   }, [user, nav]);
 
-  // 🔄 Fetch profile user + posts
+  // 🔄 Fetch profile user + posts (Axios + ESLint-safe)
   useEffect(() => {
-    if (user) {
-      loadProfileUser();
-      loadUserPosts();
+    if (!user) return;
+
+    async function loadProfileData() {
+      try {
+        const [profileRes, postsRes] = await Promise.all([
+          api.get(`/profile/${userId}`),
+          api.get("/posts"),
+        ]);
+
+        setProfileUser(profileRes.data);
+
+        const userPosts = postsRes.data.filter(
+          (p) => String(p.user_id) === String(userId)
+        );
+
+        setPosts(userPosts);
+      } catch (err) {
+        toast.error(err.message);
+      } finally {
+        setLoading(false);
+      }
     }
+
+    loadProfileData();
   }, [userId, user]);
-
-  async function loadProfileUser() {
-    try {
-      const res = await fetch(`${API_URL}/profile/${userId}`);
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to load profile");
-      }
-
-      setProfileUser(data);
-    } catch (err) {
-      toast.error(err.message);
-    }
-  }
-
-  async function loadUserPosts() {
-    try {
-      const res = await fetch(`${API_URL}/posts`);
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to load posts");
-      }
-
-      const userPosts = data.filter(
-        (p) => String(p.user_id) === String(userId)
-      );
-
-      setPosts(userPosts);
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   if (!user) return null;
 

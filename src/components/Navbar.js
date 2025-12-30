@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { useEffect, useState } from "react";
+import api from "../api/axios";
 
 export default function Navbar() {
   const { user, signOut } = useAuth();
@@ -9,32 +10,36 @@ export default function Navbar() {
   const nav = useNavigate();
   const location = useLocation();
 
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
-
   const [avatar, setAvatar] = useState(null);
 
   function active(path) {
     return location.pathname === path;
   }
 
-  // 🔄 Load profile avatar
+  // 🔄 Load profile avatar (Axios + safe effect)
   useEffect(() => {
     if (!user) {
       setAvatar(null);
       return;
     }
 
-    fetch(`${API_URL}/profile/${user.id}`)
-      .then((res) => res.json())
-      .then((data) => {
+    async function loadAvatar() {
+      try {
+        const res = await api.get(`/profile/${user.id}`);
+
         // ✅ accept BOTH possible keys
-        const image = data.profile_image || data.profile_picture || null;
+        const image =
+          res.data.profile_image || res.data.profile_picture || null;
 
         if (image) {
           setAvatar(image);
         }
-      })
-      .catch(() => {});
+      } catch {
+        // silent fail (keeps UI stable)
+      }
+    }
+
+    loadAvatar();
   }, [user]);
 
   return (

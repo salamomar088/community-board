@@ -2,43 +2,38 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
-
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+import api from "../api/axios";
 
 export default function EditPost() {
   const { id } = useParams();
   const nav = useNavigate();
-  const { user, token } = useAuth();
+  const { user } = useAuth();
 
   const [post, setPost] = useState(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // 🔄 Load post
+  // 🔄 Load post (Axios + ESLint-safe)
   useEffect(() => {
-    loadPost();
-  }, [id]);
+    async function loadPost() {
+      try {
+        const res = await api.get(`/posts/${id}`);
+        const data = res.data;
 
-  async function loadPost() {
-    try {
-      const res = await fetch(`${API_URL}/posts/${id}`);
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Post not found");
+        setPost(data);
+        setTitle(data.title);
+        setContent(data.content);
+      } catch (err) {
+        toast.error(err.message);
+        nav("/");
+      } finally {
+        setLoading(false);
       }
-
-      setPost(data);
-      setTitle(data.title);
-      setContent(data.content);
-    } catch (err) {
-      toast.error(err.message);
-      nav("/");
-    } finally {
-      setLoading(false);
     }
-  }
+
+    loadPost();
+  }, [id, nav]);
 
   // 💾 Save changes
   async function save() {
@@ -47,18 +42,10 @@ export default function EditPost() {
     }
 
     try {
-      const res = await fetch(`${API_URL}/posts/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ title, content }),
+      await api.put(`/posts/${id}`, {
+        title,
+        content,
       });
-
-      if (!res.ok) {
-        throw new Error("Failed to update post");
-      }
 
       toast.success("Post updated");
       nav(`/post/${id}`);

@@ -1,56 +1,41 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import VoteWidget from "./VoteWidget";
-import TagChip from "./TagChip";
-import toast from "react-hot-toast";
-import { useAuth } from "../contexts/AuthContext";
-import { toggleLike } from "../services/likeService";
+import api from "./api";
 
-export default function PostCard({ post }) {
-  const nav = useNavigate();
-  const { token, isAuthenticated } = useAuth();
-  const [votes, setVotes] = useState(post.votes || 0);
-
-  async function handleVote() {
-    if (!isAuthenticated) {
-      return toast.error("Sign in to vote");
-    }
-
-    try {
-      const result = await toggleLike(post.id, token);
-      setVotes(result.totalLikes);
-    } catch (err) {
-      toast.error(err.message);
-    }
+/**
+ * Get all comments for a post
+ */
+export async function getComments(postId) {
+  try {
+    const res = await api.get(`/comments/${postId}`);
+    return res.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to load comments");
   }
+}
 
-  return (
-    <div
-      className="card"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "32px 1fr",
-        gap: 12,
-        cursor: "pointer",
-      }}
-      onClick={() => nav(`/post/${post.id}`)}
-    >
-      <VoteWidget votes={votes} onUp={handleVote} onDown={handleVote} />
+/**
+ * Add a new comment
+ */
+export async function addComment({ postId, content }) {
+  try {
+    const res = await api.post("/comments", {
+      postId,
+      content,
+    });
+    return res.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to add comment");
+  }
+}
 
-      <div>
-        <div className="post-title">{post.title}</div>
-
-        <div className="post-meta" style={{ marginBottom: 8 }}>
-          {post.author?.name ?? "Unknown"} •{" "}
-          {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : ""}
-        </div>
-
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-          {post.tags?.map((t) => (
-            <TagChip key={t} tag={t} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+/**
+ * Delete a comment (owner only)
+ * (optional but professional)
+ */
+export async function deleteComment(commentId) {
+  try {
+    const res = await api.delete(`/comments/${commentId}`);
+    return res.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to delete comment");
+  }
 }

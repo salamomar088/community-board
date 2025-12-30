@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import PostCard from "../components/PostCard";
 import TagChip from "../components/TagChip";
 import toast from "react-hot-toast";
-
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+import api from "../api/axios";
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -11,41 +10,37 @@ export default function Home() {
   const [activeTag, setActiveTag] = useState(null);
   const [tagsAll, setTagsAll] = useState([]);
 
-  // 🔄 Fetch posts from backend
+  // 🔄 Fetch posts from backend (Axios + ESLint-safe)
   useEffect(() => {
+    async function fetchPosts() {
+      try {
+        const res = await api.get("/posts");
+        const data = res.data;
+
+        /**
+         * 🔁 Adapt backend posts → UI format
+         * (keeps PostCard unchanged)
+         */
+        const adaptedPosts = data.map((p) => ({
+          ...p,
+          votes: p.votes ?? 0, // backend later
+          tags: p.tags ?? ["general"], // temporary
+        }));
+
+        setPosts(adaptedPosts);
+
+        // derive unique tags (temporary until backend supports tags)
+        const uniqueTags = Array.from(
+          new Set(adaptedPosts.flatMap((p) => p.tags))
+        );
+        setTagsAll(uniqueTags);
+      } catch (err) {
+        toast.error(err.message);
+      }
+    }
+
     fetchPosts();
   }, []);
-
-  async function fetchPosts() {
-    try {
-      const res = await fetch(`${API_URL}/posts`);
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to load posts");
-      }
-
-      /**
-       * 🔁 Adapt backend posts → UI format
-       * (keeps PostCard unchanged)
-       */
-      const adaptedPosts = data.map((p) => ({
-        ...p,
-        votes: p.votes ?? 0, // backend later
-        tags: p.tags ?? ["general"], // temporary
-      }));
-
-      setPosts(adaptedPosts);
-
-      // derive unique tags (temporary until backend supports tags)
-      const uniqueTags = Array.from(
-        new Set(adaptedPosts.flatMap((p) => p.tags))
-      );
-      setTagsAll(uniqueTags);
-    } catch (err) {
-      toast.error(err.message);
-    }
-  }
 
   // 🔍 Filtering logic (UNCHANGED)
   const filtered = useMemo(() => {
@@ -58,13 +53,6 @@ export default function Home() {
       return matchQuery && matchTag;
     });
   }, [posts, query, activeTag]);
-
-  // ❤️ Vote logic (UI-only for now)
-  function vote(id, delta) {
-    setPosts((ps) =>
-      ps.map((p) => (p.id === id ? { ...p, votes: p.votes + delta } : p))
-    );
-  }
 
   function toggleActiveTag(tag) {
     setActiveTag((prev) => (prev === tag ? null : tag));
@@ -94,13 +82,7 @@ export default function Home() {
         )}
 
         {filtered.map((p) => (
-          <PostCard
-            key={p.id}
-            post={p}
-            onUp={() => vote(p.id, +1)}
-            onDown={() => vote(p.id, -1)}
-            onTagClick={(t) => setActiveTag(t)}
-          />
+          <PostCard key={p.id} post={p} />
         ))}
       </div>
 

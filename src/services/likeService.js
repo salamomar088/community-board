@@ -1,20 +1,13 @@
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+import api from "./api";
 
-export async function toggleLike(postId, token) {
-  const res = await fetch(`${API_URL}/likes`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ postId }),
-  });
+export async function toggleLike(postId) {
+  try {
+    const res = await api.post("/likes", { postId });
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.message || "Failed to toggle like");
+    return res.data;
+    // expected:
+    // { status: "success", liked: true/false, likes: number }
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to toggle like");
   }
-
-  return data;
 }

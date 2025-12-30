@@ -4,8 +4,7 @@ import remarkGfm from "remark-gfm";
 import toast from "react-hot-toast";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+import api from "../api/axios";
 
 // temporary tags (until backend supports tags)
 const TAGS = ["general", "help", "discussion", "news", "random"];
@@ -16,7 +15,7 @@ export default function CreatePost() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [preview, setPreview] = useState(false);
 
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const nav = useNavigate();
 
   function toggleTag(tag) {
@@ -25,7 +24,7 @@ export default function CreatePost() {
     );
   }
 
-  // 🚀 CREATE POST (REAL BACKEND)
+  // 🚀 CREATE POST (AXIOS)
   async function create() {
     if (!user) return toast.error("Sign in to create a post");
     if (!title.trim() || !content.trim()) {
@@ -33,24 +32,11 @@ export default function CreatePost() {
     }
 
     try {
-      const res = await fetch(`${API_URL}/posts`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          title,
-          content,
-          // tags intentionally omitted for now
-        }),
+      await api.post("/posts", {
+        title,
+        content,
+        // tags intentionally omitted for now
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to create post");
-      }
 
       toast.success("Post created");
       nav("/"); // go back to feed
