@@ -1,70 +1,105 @@
-# Getting Started with Create React App
+# Community Board Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Frontend application for the **Community Board** platform, built with **React**.  
+This app allows users to register, log in, create posts with tags, like posts, comment, and view user profiles.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Features
 
-### `npm start`
+- User authentication (JWT-based)
+- Create, edit, and delete posts
+- Tags system with filtering
+- Like (vote) system
+- Comments on posts
+- User profile pages with avatars
+- Responsive and clean UI
+- Real-time interaction with backend API
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠 Tech Stack
 
-### `npm test`
+- **React**
+- **React Router**
+- **Axios**
+- **React Hooks**
+- **Custom CSS (CSS variables)**
+- **React Hot Toast**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 📁 Project Structure
 
-### `npm run build`
+src/
+├── api/
+│ └── axios.js
+├── components/
+├── contexts/
+├── pages/
+├── services/
+├── App.js
+├── index.js
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+▶️ Run Locally
+Install dependencies:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+npm install
+Start development server:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+http://localhost:3000
+🔗 Backend Connection
+The frontend communicates with the backend via REST API using Axios.
 
-### `npm run eject`
+Example API base URL:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+bash
+Copy code
+http://localhost:5000/api
+Endpoints used include:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+/auth
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+/posts
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+/comments
 
-## Learn More
+/likes
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+/profile
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+🏷 Tags System
+Tags are selected during post creation
 
-### Code Splitting
+Sent to backend as an array
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Stored as JSON in the database
 
-### Analyzing the Bundle Size
+Parsed and rendered dynamically
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Used for real-time filtering in the feed
 
-### Making a Progressive Web App
+Example:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+less
+Copy code
+#discussion #help #news
+🔐 Authentication
+JWT stored in localStorage
 
-### Advanced Configuration
+Automatically attached to requests via Axios interceptor
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Protected routes require authentication
 
-### Deployment
+🌍 Deployment
+Frontend can be deployed on Vercel
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Backend hosted separately (e.g. Render)
 
-### `npm run build` fails to minify
+API URL configured using environment variables
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+👨‍💻 Author
+Omar Salam
+Computer Science
+Lebanese International University (LIU)
+
+📌 Notes
+This project was initially bootstrapped with Create React App, then extended with custom architecture and features.
