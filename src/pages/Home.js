@@ -23,8 +23,7 @@ export default function Home() {
          */
         const adaptedPosts = data.map((p) => ({
           ...p,
-          votes: p.votes ?? 0, // backend later
-          tags: p.tags ?? ["general"], // temporary
+          tags: p.tags ?? ["general"],
         }));
 
         setPosts(adaptedPosts);
