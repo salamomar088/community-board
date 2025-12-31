@@ -1,112 +1,105 @@
-# 📘 Knowledge Community – React Project
+# Community Board Frontend
 
-A fully responsive community platform where users can create posts, view posts, filter by tags, vote, and browse in light or dark mode.  
-This project was built as part of a university course requirement and includes complete mobile responsiveness, GitHub version control, and Vercel deployment.
-
----
-
-## 🚀 Live Demo (Deployed on Vercel)
-
-🔗 **Live Website:** https://community-board-project.vercel.app
-_(Replace with your actual Vercel domain)_
+Frontend application for the **Community Board** platform, built with **React**.  
+This app allows users to register, log in, create posts with tags, like posts, comment, and view user profiles.
 
 ---
 
-## 📱 Mobile Responsive
+## 🚀 Features
 
-Designed to work smoothly on:
-
-- iPhone 13 / 14 / 15
-- Android devices
-- Tablets
-- Chrome DevTools mobile emulation
-
-All pages adjust automatically:
-
-- Home
-- Create Post
-- Login / Register
-- Profile
-- Footer
-- Navbar
+- User authentication (JWT-based)
+- Create, edit, and delete posts
+- Tags system with filtering
+- Like (vote) system
+- Comments on posts
+- User profile pages with avatars
+- Responsive and clean UI
+- Real-time interaction with backend API
 
 ---
 
-## ⭐ Features
+## 🛠 Tech Stack
 
-### 🎨 UI/UX
+- **React**
+- **React Router**
+- **Axios**
+- **React Hooks**
+- **Custom CSS (CSS variables)**
+- **React Hot Toast**
 
-- Modern responsive layout
-- Light/Dark mode
-- Animated footer
-- Clean typography
-- Mobile-optimized modals
-- Smooth interactions
-
-### ✏️ Functionality
-
-- Create posts
-- View post details
-- Vote (up/down)
-- Filter by tags
-- Preview posts in Markdown
-- User login/logout (mock auth)
-- Profile page showing user posts
-
-### ⚙️ Developer Features
-
-- Component-based architecture
-- Context API for Auth + Theme
-- React Router for navigation
-- Custom responsive CSS system
-- Deployed on Vercel
-- Git version control with multiple branches
-
----
-
-## 🛠 Technologies Used
-
-### **Frontend**
-
-- React.js
-- React Router
-- Context API
-- React Markdown (markdown preview)
-- Custom CSS (responsive)
-
-### **Tools**
-
-- Git & GitHub
-- Node.js
-- Vercel (deployment)
-- VS Code
-
----
-
-## 📂 Project Structure
+## 📁 Project Structure
 
 src/
-│── components/
-│ ├── Navbar.js
-│ ├── Footer.js
-│ ├── PostCard.js
-│ ├── TagChip.js
-│ ├── VoteWidget.js
-│── contexts/
-│ ├── AuthContext.js
-│ ├── ThemeContext.js
-│── pages/
-│ ├── Home.js
-│ ├── CreatePost.js
-│ ├── PostDetail.js
-│ ├── Profile.js
-│ ├── Login.js
-│ ├── Register.js
-│── data/
-│ ├── mock.js
-│── styles/
-│ ├── styles.css
-│── App.js
-│── index.js
-public/
-README.md
+├── api/
+│ └── axios.js
+├── components/
+├── contexts/
+├── pages/
+├── services/
+├── App.js
+├── index.js
+
+▶️ Run Locally
+Install dependencies:
+
+npm install
+Start development server:
+
+http://localhost:3000
+🔗 Backend Connection
+The frontend communicates with the backend via REST API using Axios.
+
+Example API base URL:
+
+bash
+Copy code
+http://localhost:5000/api
+Endpoints used include:
+
+/auth
+
+/posts
+
+/comments
+
+/likes
+
+/profile
+
+🏷 Tags System
+Tags are selected during post creation
+
+Sent to backend as an array
+
+Stored as JSON in the database
+
+Parsed and rendered dynamically
+
+Used for real-time filtering in the feed
+
+Example:
+
+less
+Copy code
+#discussion #help #news
+🔐 Authentication
+JWT stored in localStorage
+
+Automatically attached to requests via Axios interceptor
+
+Protected routes require authentication
+
+🌍 Deployment
+Frontend can be deployed on Vercel
+
+Backend hosted separately (e.g. Render)
+
+API URL configured using environment variables
+
+👨‍💻 Author
+Omar Salam
+Computer Science
+Lebanese International University (LIU)
+
+📌 Notes
+This project was initially bootstrapped with Create React App, then extended with custom architecture and features.
