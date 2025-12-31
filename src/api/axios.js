@@ -1,17 +1,12 @@
 import axios from "axios";
 
-// Base API URL (same one you already use)
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
-
-// Create Axios instance
+const API_URL = "http://localhost:5000/api";
+console.log("API_URL USED:", API_URL);
 const api = axios.create({
   baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
-// 🔐 Request Interceptor (attach token automatically)
+// 🔐 Attach token automatically
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -20,16 +15,20 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    // ✅ Let browser set Content-Type for FormData
+    if (config.data instanceof FormData) {
+      delete config.headers["Content-Type"];
+    }
+
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// ❗ Response Interceptor (centralized error handling)
+// ❗ Centralized error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Extract backend error message if exists
     const message =
       error.response?.data?.message || error.message || "Something went wrong";
 

@@ -6,7 +6,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
-// temporary tags (until backend supports tags)
+// Available tags (backend-driven storage, no pre-definition needed)
 const TAGS = ["general", "help", "discussion", "news", "random"];
 
 export default function CreatePost() {
@@ -19,27 +19,31 @@ export default function CreatePost() {
   const nav = useNavigate();
 
   function toggleTag(tag) {
-    setSelectedTags((ts) =>
-      ts.includes(tag) ? ts.filter((t) => t !== tag) : [...ts, tag]
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
   }
 
-  // 🚀 CREATE POST (AXIOS)
+  // 🚀 CREATE POST
   async function create() {
     if (!user) return toast.error("Sign in to create a post");
     if (!title.trim() || !content.trim()) {
       return toast.error("Please fill Title & Content");
     }
 
+    if (selectedTags.length === 0) {
+      return toast.error("Please select at least one tag");
+    }
+
     try {
       await api.post("/posts", {
-        title,
-        content,
-        // tags intentionally omitted for now
+        title: title.trim(),
+        content: content.trim(),
+        tags: selectedTags, // ✅ GUARANTEED NON-EMPTY ARRAY
       });
 
       toast.success("Post created");
-      nav("/"); // go back to feed
+      nav("/");
     } catch (err) {
       toast.error(err.message);
     }
@@ -52,8 +56,8 @@ export default function CreatePost() {
           <button
             key={t}
             className="tag"
-            onClick={() => toggleTag(t)}
             aria-pressed={selectedTags.includes(t)}
+            onClick={() => toggleTag(t)}
           >
             #{t}
             {selectedTags.includes(t) ? " ✓" : ""}
@@ -89,14 +93,12 @@ export default function CreatePost() {
           maxWidth: 800,
           maxHeight: "88vh",
           overflowY: "auto",
-          position: "relative",
           borderRadius: 16,
         }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex-between">
           <div style={{ fontWeight: 600 }}>Create Post</div>
-
           <button className="btn" onClick={closeModal}>
             Back
           </button>
@@ -129,7 +131,7 @@ export default function CreatePost() {
             </div>
 
             <div className="flex" style={{ justifyContent: "space-between" }}>
-              <button className="btn" onClick={() => setPreview((p) => !p)}>
+              <button className="btn" onClick={() => setPreview(true)}>
                 Preview
               </button>
 

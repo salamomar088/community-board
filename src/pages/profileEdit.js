@@ -30,17 +30,21 @@ export default function ProfileEdit() {
     if (!image) return toast.error("Please select an image");
 
     const formData = new FormData();
-    formData.append("image", image);
+    formData.append("image", image); // 🔑 correct key
 
     try {
       setLoading(true);
 
-      await api.put("/profile/image", formData);
+      await api.put("/profile/image", formData, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
 
       toast.success("Profile image updated");
       nav(`/profile/${user.id}`);
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.message || "Upload failed");
     } finally {
       setLoading(false);
     }

@@ -3,10 +3,11 @@ export default function TagChip({ label, active, onClick }) {
     <button
       className="tag"
       aria-pressed={active}
-      onClick={onClick}
+      onClick={onClick} // 🔑 no logic here
       style={{
         background: active ? "var(--primary)" : "var(--tag-bg)",
         color: active ? "white" : "var(--tag-text)",
+        cursor: "pointer",
       }}
     >
       #{label}

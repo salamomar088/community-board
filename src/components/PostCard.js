@@ -27,13 +27,13 @@ function timeAgo(date) {
   return "Posted just now";
 }
 
-export default function PostCard({ post }) {
+export default function PostCard({ post, onTagClick }) {
   const nav = useNavigate();
   const { isAuthenticated } = useAuth();
   const [votes, setVotes] = useState(post.votes || 0);
 
   async function handleVote(e) {
-    if (e) e.stopPropagation(); // ✅ prevent card click
+    if (e) e.stopPropagation();
 
     if (!isAuthenticated) {
       return toast.error("Sign in to vote");
@@ -41,7 +41,6 @@ export default function PostCard({ post }) {
 
     try {
       const result = await toggleLike(post.id);
-
       if (typeof result.likes === "number") {
         setVotes(result.likes);
       }
@@ -114,12 +113,18 @@ export default function PostCard({ post }) {
 
         {/* POST TITLE */}
         <div className="post-title">{post.title}</div>
-
-        {/* TAGS */}
+        {/* ✅ TAGS — FIXED */}
         {Array.isArray(post.tags) && post.tags.length > 0 && (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          <div className="tags" style={{ marginTop: 10 }}>
             {post.tags.map((t) => (
-              <TagChip key={t} tag={t} />
+              <TagChip
+                key={t}
+                label={t}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onTagClick?.(t);
+                }}
+              />
             ))}
           </div>
         )}

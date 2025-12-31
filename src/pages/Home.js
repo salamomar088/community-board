@@ -10,45 +10,54 @@ export default function Home() {
   const [activeTag, setActiveTag] = useState(null);
   const [tagsAll, setTagsAll] = useState([]);
 
-  // 🔄 Fetch posts from backend (Axios + ESLint-safe)
+  // 🔄 Fetch posts from backend
   useEffect(() => {
     async function fetchPosts() {
       try {
         const res = await api.get("/posts");
-        const data = res.data;
+        const data = Array.isArray(res.data) ? res.data : [];
 
-        /**
-         * 🔁 Adapt backend posts → UI format
-         * (keeps PostCard unchanged)
-         */
-        const adaptedPosts = data.map((p) => ({
+        // ✅ FIX: preserve backend tags (DO NOT ERASE THEM)
+        const normalizedPosts = data.map((p) => ({
           ...p,
-          tags: p.tags ?? ["general"],
+          votes: Number(p?.votes) || 0,
+          tags: p?.tags ?? [], // 🔴 FIX IS HERE
         }));
 
-        setPosts(adaptedPosts);
+        setPosts(normalizedPosts);
 
-        // derive unique tags (temporary until backend supports tags)
+        // ✅ Extract unique tags safely
         const uniqueTags = Array.from(
-          new Set(adaptedPosts.flatMap((p) => p.tags))
+          new Set(
+            normalizedPosts.flatMap((p) =>
+              Array.isArray(p.tags) ? p.tags : []
+            )
+          )
         );
+
         setTagsAll(uniqueTags);
       } catch (err) {
-        toast.error(err.message);
+        toast.error(err.message || "Failed to load posts");
       }
     }
 
     fetchPosts();
   }, []);
 
-  // 🔍 Filtering logic (UNCHANGED)
+  // 🔍 Filtering logic
   const filtered = useMemo(() => {
     const q = query.toLowerCase();
+
     return posts.filter((p) => {
+      if (!p) return false;
+
       const matchQuery =
-        p.title.toLowerCase().includes(q) ||
-        p.content.toLowerCase().includes(q);
-      const matchTag = !activeTag || p.tags.includes(activeTag);
+        p.title?.toLowerCase().includes(q) ||
+        p.content?.toLowerCase().includes(q);
+
+      const matchTag =
+        !activeTag || (Array.isArray(p.tags) && p.tags.includes(activeTag));
+
       return matchQuery && matchTag;
     });
   }, [posts, query, activeTag]);
@@ -68,12 +77,7 @@ export default function Home() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <button
-            className="btn"
-            onClick={() => toast.success("Search updated")}
-          >
-            Search
-          </button>
+          <button className="btn">Search</button>
         </div>
 
         {filtered.length === 0 && (
@@ -81,7 +85,7 @@ export default function Home() {
         )}
 
         {filtered.map((p) => (
-          <PostCard key={p.id} post={p} />
+          <PostCard key={p.id} post={p} onTagClick={toggleActiveTag} />
         ))}
       </div>
 
@@ -89,7 +93,12 @@ export default function Home() {
       <aside className="grid" style={{ alignSelf: "start" }}>
         <div className="card">
           <div style={{ fontWeight: 600, marginBottom: 8 }}>Trending Tags</div>
+
           <div className="tags">
+            {tagsAll.length === 0 && (
+              <div className="post-meta">No tags yet</div>
+            )}
+
             {tagsAll.map((t) => (
               <TagChip
                 key={t}
